@@ -8,8 +8,7 @@ stages:
     - deploy
 
 before_script:
-    - apk add --no-cache py-pip
-    - apk add nodejs
+    - apk add --no-cache py-pip nodejs nodejs-npm
     - pip install docker-compose
     - cd frontend
     - npm run build
