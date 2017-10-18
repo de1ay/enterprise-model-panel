@@ -1,0 +1,44 @@
+version: '2'
+services:
+    backend:
+        image: registry.gitlab.com/de1ay/enterprise-model-panel:latest
+        build: ./backend
+        environment:
+            - SECRET_KEY=${SECRET_KEY}
+        command: bash -c "sleep 5 && python ./manage.py makemigrations && python ./manage.py migrate && uwsgi /usr/src/app/uwsgi.ini"
+        volumes:
+            - ./static:/usr/src/app/static
+        restart: unless-stopped
+
+    test:
+        image: registry.gitlab.com/de1ay/enterprise-model-panel:latest
+        build: ./backend
+        command: python manage.py test
+        depends_on:
+            - postgres
+        links:
+            - postgres
+        restart: "no"
+
+    postgres:
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=root
+            - POSTGRES_DB=entmode
+            - PGDATA=/usr/src/posgres
+        volumes:
+            - ../postgres:/usr/src/postgres
+        restart: unless-stopped
+
+    nginx:
+        image: nginx:mainline
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./nginx:/etc/nginx:ro
+            - ./static:/usr/src/app/static
+            - ./frontend/dist:/usr/src/app/frontend
+        depends_on:
+            - backend
+        restart: unless-stopped
