@@ -29,7 +29,7 @@ deploy:
     only:
         - master
     before_script:
-        - apk add --no-cache openssh-client py-pip py-crypto bash rsync gcc musl-dev linux-headers python-dev libffi-dev
+        - apk add --no-cache openssh-client py-pip py-crypto bash rsync gcc musl-dev linux-headers python-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev
         - pip install fabric
         - eval $(ssh-agent -s)
         - bash -c 'ssh-add <(echo "$DEPLOY_KEY")'
