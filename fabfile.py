@@ -40,17 +40,16 @@ def deploy():
                                          os.getenv('CI_BUILD_TOKEN'),
                                          os.getenv('CI_REGISTRY',
                                                    'registry.gitlab.com')))
-
     with settings(warn_only=True):
         with hide('warnings'):
-            need_bootstrap = run('docker ps | grep -q web').return_code != 0
+            need_bootstrap = run('docker ps | grep -q backend').return_code != 0
     if need_bootstrap:
         print(magenta('No previous installation found, bootstrapping'))
         rsync()
         docker_compose('up -d')
 
-    run('touch %s/nginx/maintenance && docker kill -s HUP nginx_1' % PATH)
+    run('touch %s/nginx/maintenance && docker kill -s HUP forcamp_nginx_1' % PATH)
     rsync()
     docker_compose('pull')
     docker_compose('up -d')
-    run('rm -f %s/nginx/maintenance && docker kill -s HUP nginx_1' % PATH)
+    run('rm -f %s/nginx/maintenance && docker kill -s HUP forcamp_nginx_1' % PATH)
