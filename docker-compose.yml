@@ -1,7 +1,7 @@
 version: '2'
 services:
     backend:
-        image: registry.gitlab.com/de1ay/enterprise-model-panel:latest
+        image: registry.gitlab.com/de1ay/enterprice-model-panel:latest
         build: ./backend
         environment:
             - SECRET_KEY=${SECRET_KEY}
@@ -11,7 +11,7 @@ services:
         restart: unless-stopped
 
     test:
-        image: registry.gitlab.com/de1ay/enterprise-model-panel:latest
+        image: registry.gitlab.com/de1ay/enterprice-model-panel:latest
         build: ./backend
         command: python manage.py test
         depends_on:
