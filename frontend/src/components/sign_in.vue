@@ -46,7 +46,7 @@
     align-items: center;
     height: 100vh;
     width: 100vw;
-    background-color: #2ecc71
+    background-color: #3498db
   }
 
   .signIn__form {
@@ -104,7 +104,7 @@
     height: 55px;
     border-radius: 20px;
     border: none;
-    background-color: #2ecc71;
+    background-color: #3498db;
     text-transform: uppercase;
     color: #fff;
     font-size: 30px;
@@ -113,7 +113,7 @@
     transition: all 0.3s ease-in-out;
   }
 
-  .form-field__submit:hover {  background: #27ae60; }
+  .form-field__submit:hover {  background: #2980b9; }
 
   .form-field__actions {
     display: flex;

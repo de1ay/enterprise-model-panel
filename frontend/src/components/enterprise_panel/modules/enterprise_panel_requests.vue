@@ -53,7 +53,7 @@
             label: 'Конец',
             field: 'end_date',
             type: 'date',
-            inputFormat: 'DD/MM/YYYY',
+            inputFormat: 'MM/DD/YYYY',
             outputFormat: 'DD/MM/YYYY'
           },
           {
@@ -74,11 +74,11 @@
     border-top: none !important;
     border-right: none !important;
     border-left: none !important;
-    border-bottom: 0.5px rgba(46,204,113, 0.4) solid !important;
+    border-bottom: 0.5px rgba(52, 152, 219, 0.4) solid !important;
   }
 
   .requests .table.condensed thead th, .requests .table thead th {
-    background-color: #2ecc71 !important;
+    background-color: #3498db !important;
     color: #fff;
   }
 

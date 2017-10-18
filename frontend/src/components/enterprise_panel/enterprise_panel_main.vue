@@ -8,13 +8,19 @@
            :class="{'menu__item--active': selected_module === 'enterprise_panel_requests'}"
            @click="selected_module = 'enterprise_panel_requests'">
         <icon name="pencil-square-o" scale="1" class="menu__item-icon"></icon>
-        <span class="menu__item-text">заявки</span>
+        <span class="menu__item-text">{{modules_headers_headlines['enterprise_panel_requests']}}</span>
       </div>
       <div class="menu__item"
            :class="{'menu__item--active': selected_module === 'enterprise_panel_billings'}"
            @click="selected_module = 'enterprise_panel_billings'">
         <icon name="credit-card" scale="1" class="menu__item-icon"></icon>
-        <span class="menu__item-text">оплата</span>
+        <span class="menu__item-text">{{modules_headers_headlines['enterprise_panel_billings']}}</span>
+      </div>
+      <div class="menu__item"
+           :class="{'menu__item--active': selected_module === 'enterprise_panel_gantt'}"
+           @click="selected_module = 'enterprise_panel_gantt'">
+        <icon name="calendar" scale="1" class="menu__item-icon"></icon>
+        <span class="menu__item-text">{{modules_headers_headlines['enterprise_panel_gantt']}}</span>
       </div>
     </div>
     <div class="container">
@@ -35,29 +41,32 @@
   import 'vue-awesome/icons/pencil-square-o'
   import 'vue-awesome/icons/credit-card'
   import 'vue-awesome/icons/plus'
+  import 'vue-awesome/icons/calendar'
   import EnterprisePanelRequests from '@/components/enterprise_panel/modules/enterprise_panel_requests'
   import EnterprisePanelBillings from '@/components/enterprise_panel/modules/enterprise_panel_billings'
+  import EnterprisePanelGantt from '@/components/enterprise_panel/modules/enterprise_panel_gantt'
   export default {
     name: 'EnterprisePanelMain',
     data () {
       return {
         modules_headers_headlines: {
           'enterprise_panel_requests': 'Заявки',
-          'enterprise_panel_billings': 'Оплата'
+          'enterprise_panel_billings': 'Оплата',
+          'enterprise_panel_gantt': 'График'
         },
         selected_module: 'enterprise_panel_requests',
         requests: [
           {
             id: 1,
             customer: 'Таттелеком',
-            place: 'Проспект победы',
+            place: 'Проспект Победы',
             brand: 'Летай',
             sum: 100,
             duration: 10,
             status: 'Оплачен',
-            billing_date: '12/10/2017',
-            start_date: '22/10/2017',
-            end_date: '24/10/2017'
+            billing_date: '10/12/2017',
+            start_date: '10/17/2017',
+            end_date: '11/12/2017'
           },
           {
             id: 2,
@@ -67,9 +76,9 @@
             sum: 80,
             duration: 6,
             status: 'В обработке',
-            billing_date: '12/11/2017',
-            start_date: '22/11/2017',
-            end_date: '24/11/2017'
+            billing_date: '11/01/2017',
+            start_date: '11/10/2017',
+            end_date: '11/20/2017'
           }
         ],
         billings: [
@@ -78,7 +87,7 @@
             customer: 'Таттелеком',
             brand: 'Летай',
             sum: 100,
-            date: '12/10/2017'
+            date: '10/12/2017'
           }
         ]
       }
@@ -88,7 +97,8 @@
     },
     components: {
       'enterprise_panel_requests': EnterprisePanelRequests,
-      'enterprise_panel_billings': EnterprisePanelBillings
+      'enterprise_panel_billings': EnterprisePanelBillings,
+      'enterprise_panel_gantt': EnterprisePanelGantt
     }
   }
 </script>
@@ -143,7 +153,7 @@
 
   .page_name-text {
     font-size: 24px;
-    color: #2ecc71;
+    color: #3498db;
   }
 
   .header-actions {
@@ -157,7 +167,7 @@
   .actions__button {
     padding: 5px 10px;
     color: #fff;
-    background: #2ecc71;
+    background: #3498db;
     font-size: 18px;
     border-radius: 10px;
     border: none;
@@ -167,7 +177,7 @@
 
   .actions__button:hover {
     cursor: pointer;
-    background: #27ae60;
+    background: #2980b9;
   }
 
   .brand {
@@ -183,7 +193,7 @@
   .brand-text {
     font-size: 28px;
     font-weight: 800;
-    color: #2ecc71;
+    color: #3498db;
   }
 
   .menu__item:nth-child(2) { margin-top: 50px; }
@@ -196,7 +206,7 @@
     height: 50px;
     width: 90%;
     margin-left: 10%;
-    color: #2ecc71;
+    color: #3498db;
     font-size: 24px;
     transition: all 0.3s ease-in-out;
   }
@@ -205,12 +215,12 @@
 
   .menu__item:not(.menu__item--active):hover {
     color: #fff;
-    background: #2ecc71;
+    background: #3498db;
   }
 
   .menu__item--active {
     color: #fff;
-    background: #2ecc71;
+    background: #3498db;
   }
 
   .menu__item--active:after {
@@ -219,7 +229,7 @@
     left: 190px;
     width: 10px;
     height: 50px;
-    background: #27ae60;
+    background: #2980b9;
   }
 
   .menu__item-icon {
