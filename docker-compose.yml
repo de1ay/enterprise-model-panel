@@ -21,7 +21,7 @@ services:
         restart: "no"
 
     postgres:
-        image: postgres:9.6
+        image: postgres:latest
         environment:
             - POSTGRES_USER=root
             - POSTGRES_DB=entmode
