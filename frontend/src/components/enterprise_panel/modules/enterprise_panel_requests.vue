@@ -46,7 +46,7 @@
             label: 'Начало',
             field: 'start_date',
             type: 'date',
-            inputFormat: 'DD/MM/YYYY',
+            inputFormat: 'MM/DD/YYYY',
             outputFormat: 'DD/MM/YYYY'
           },
           {

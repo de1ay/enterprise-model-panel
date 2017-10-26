@@ -15,5 +15,4 @@ COPY . /usr/src/app
 
 ARG SECRET_KEY="9z1&pn!+6x@#7w^vr8z23&e82*5@^lo5%zpk7wygo)6bzx5(%a"
 ENV SECRET_KEY $SECRET_KEY
-RUN python ./manage.py collectstatic --noinput && \
-    apk del .build-deps
+RUN apk del .build-deps

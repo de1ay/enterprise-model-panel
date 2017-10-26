@@ -25,17 +25,21 @@ SECRET_KEY = '9z1&pn!+6x@#7w^vr8z23&e82*5@^lo5%zpk7wygo)6bzx5(%a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'beta.project.nullteam.info'
+]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.staticfiles',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'deals',
+    'clients',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -77,6 +81,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'entmode',
+        'USER': 'root',
         'HOST': 'postgres',
     }
 }
@@ -106,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC+3'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

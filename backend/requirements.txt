@@ -1,3 +1,7 @@
 django
 psycopg2
 uwsgi
+djangorestframework
+markdown
+pyyaml
+django-filter

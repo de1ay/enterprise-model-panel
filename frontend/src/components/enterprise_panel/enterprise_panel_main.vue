@@ -1,5 +1,12 @@
 <template>
   <div id="enterprise_panel_main">
+    <enterprise_panel_modal 
+      v-if="modal_active" 
+      :modal_type="modal_types[selected_module]"
+      :modal_active.sync="modal_active"
+      :requests.sync="requests"
+      :billings.sync="billings">
+    </enterprise_panel_modal>
     <div class="menu">
       <div class="brand">
         <span class="brand-text">NullTeam</span>
@@ -29,7 +36,7 @@
           <span class="page_name-text">{{modules_headers_headlines[selected_module]}}</span>
         </div>
         <div class="header-actions" v-if="selected_module === 'enterprise_panel_requests'">
-          <button class="actions__button">Создать заявку</button>
+          <button @click="modal_active = !modal_active" class="actions__button">Создать заявку</button>
         </div>
       </div>
       <component :is="selected_module" :requests.sync="requests" :billings.sync="billings"></component>
@@ -42,13 +49,21 @@
   import 'vue-awesome/icons/credit-card'
   import 'vue-awesome/icons/plus'
   import 'vue-awesome/icons/calendar'
+  // import axios from 'axios'
   import EnterprisePanelRequests from '@/components/enterprise_panel/modules/enterprise_panel_requests'
   import EnterprisePanelBillings from '@/components/enterprise_panel/modules/enterprise_panel_billings'
   import EnterprisePanelGantt from '@/components/enterprise_panel/modules/enterprise_panel_gantt'
+  import EnterprisePanelModal from '@/components/enterprise_panel/enterprise_panel_modal'
   export default {
     name: 'EnterprisePanelMain',
     data () {
       return {
+        modal_active: false,
+        modal_types: {
+          'enterprise_panel_requests': 'enterprise_panel_modal_requests',
+          'enterprise_panel_billings': 'enterprise_panel_modal_billings',
+          'enterprise_panel_gantt': 'enterprise_panel_modal_gantt'
+        },
         modules_headers_headlines: {
           'enterprise_panel_requests': 'Заявки',
           'enterprise_panel_billings': 'Оплата',
@@ -89,16 +104,18 @@
             sum: 100,
             date: '10/12/2017'
           }
-        ]
+        ],
+        deals: []
       }
     },
-    methods: {
-
+    created () {
+      // axios.get('https://beta.project.nullteam.info/api/deals/').then(resp => { this.deals = resp.data })
     },
     components: {
       'enterprise_panel_requests': EnterprisePanelRequests,
       'enterprise_panel_billings': EnterprisePanelBillings,
-      'enterprise_panel_gantt': EnterprisePanelGantt
+      'enterprise_panel_gantt': EnterprisePanelGantt,
+      'enterprise_panel_modal': EnterprisePanelModal
     }
   }
 </script>
