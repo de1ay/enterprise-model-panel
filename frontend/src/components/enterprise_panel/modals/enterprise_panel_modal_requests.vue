@@ -76,6 +76,7 @@
   import 'vue-awesome/icons/clock-o'
   import flatPickr from 'vue-flatpickr-component'
   import 'flatpickr/dist/flatpickr.css'
+  import {Russian} from 'flatpickr/dist/l10n/ru'
   export default {
     name: 'EnterprisePanelModalRequests',
     props: ['requests', 'billings'],
@@ -91,7 +92,8 @@
         date_config: {
           altFormat: 'd/m/Y',
           altInput: true,
-          dateFormat: 'm/d/Y'
+          dateFormat: 'm/d/Y',
+          locale: Russian
         }
       }
     },
