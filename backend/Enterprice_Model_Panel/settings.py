@@ -26,7 +26,8 @@ SECRET_KEY = '9z1&pn!+6x@#7w^vr8z23&e82*5@^lo5%zpk7wygo)6bzx5(%a'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'beta.project.nullteam.info'
+    'beta.project.nullteam.info',
+    'localhost'
 ]
 
 
@@ -39,12 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'deals',
     'clients',
+    'media',
     'rest_framework',
+    # 'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -70,6 +74,8 @@ TEMPLATES = [
         },
     },
 ]
+
+# CORS_ORIGIN_ALLOW_ALL = True
 
 WSGI_APPLICATION = 'Enterprice_Model_Panel.wsgi.application'
 

@@ -25,6 +25,7 @@ services:
         environment:
             - POSTGRES_USER=root
             - POSTGRES_DB=entmode
+            - POSTGRES_PASSWORD=2929dfd581e1d7d4f89d8131521e4173ccbc0e2ea9be11756cc6693bbd3cf893
         ports:
             - "5432:5432"
         volumes:

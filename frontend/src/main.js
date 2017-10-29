@@ -6,14 +6,18 @@ import router from './router'
 import Icon from 'vue-awesome/components/Icon'
 import VueGoodTable from 'vue-good-table'
 import VueCharts from 'vue-charts'
+import Multiselect from 'vue-multiselect'
+import Snotify from 'vue-snotify'
 
 let VueCookie = require('vue-cookie')
 
 Vue.config.productionTip = false
 Vue.component('icon', Icon)
+Vue.component('multiselect', Multiselect)
 Vue.use(VueCookie)
 Vue.use(VueGoodTable)
 Vue.use(VueCharts)
+Vue.use(Snotify)
 
 /* eslint-disable no-new */
 new Vue({

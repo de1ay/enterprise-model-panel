@@ -9,15 +9,17 @@
         :rowsPerPageText="rowsPerPage"
         :nextText="nextText"
         :prevText="prevText"
+        :onClick="deleteDealConfirm"
         :ofText="ofText"/>
     </div>
   </div>
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     name: 'EnterprisePanelRequests',
-    props: ['requests', 'billings'],
+    props: ['requests', 'billings', 'media', 'clients', 'deals'],
     data () {
       return {
         ofText: 'из',
@@ -27,19 +29,19 @@
         requests_columns: [
           {
             label: 'Место',
-            field: 'place'
+            field: 'deal_media.media_name'
           },
           {
             label: 'Заказчик',
-            field: 'customer'
+            field: 'deal_client.client_name'
           },
           {
             label: 'Бренд',
-            field: 'brand'
+            field: 'deal_brand'
           },
           {
             label: 'Сумма',
-            field: 'sum',
+            field: 'deal_sum',
             type: 'number'
           },
           {
@@ -58,9 +60,66 @@
           },
           {
             label: 'Статус',
-            field: 'status'
+            field: this.parseStatus
           }
         ]
+      }
+    },
+    methods: {
+      parseStatus (rowObj) {
+        switch (rowObj.deal_status) {
+          case '0': return 'В обработке'
+          case '1': return 'Оплачен'
+          case '2': return 'Завершен'
+          default: return 'Ошибка'
+        }
+      },
+      deleteDealConfirm (rowObj, index) {
+        this.$snotify.confirm('Удалить сделку?', 'Удаление', {
+          timeout: 2000,
+          showProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          buttons: [
+            {text: 'Да', action: (notifyId) => { this.deleteDeal(rowObj); this.$snotify.remove(notifyId) }},
+            {text: 'Нет', action: (notifyId) => this.$snotify.remove(notifyId)}
+          ]
+        })
+      },
+      deleteDeal (rowObj) {
+        this.$snotify.async(
+          'Запрос выполняется',
+          'Подождите...',
+          () => new Promise((resolve, reject) => {
+            axios.delete('https://beta.project.nullteam.info/api/deals/' + rowObj.deal_id).then(resp => {
+              this.requests.splice(this.requests.indexOf(rowObj))
+              this.$emit('update:requsets', this.requests)
+              resolve({
+                title: 'Успешно',
+                body: 'Сделка удалена',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+            }).catch(resp => {
+              /*eslint-disable */
+              reject({
+                title: 'Ошибка!',
+                body: 'Сделка не удалена',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+              /*eslint-enable */
+            })
+          }
+        ))
       }
     }
   }

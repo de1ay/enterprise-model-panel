@@ -5,3 +5,4 @@ djangorestframework
 markdown
 pyyaml
 django-filter
+django-cors-headers

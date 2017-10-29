@@ -31,6 +31,13 @@
       authorize () {
         if (this.login === 'test' && this.password === 'qazwsx123') {
           this.$router.push({name: 'panel_main'})
+        } else {
+          this.$snotify.error('Ошибка!', 'Неверный логин/пароль', {
+            timeout: 2000,
+            showProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true
+          })
         }
       }
     }
@@ -57,7 +64,7 @@
     height: 304px;
     width: 598px;
     background-color: #ecf0f1;
-    border-radius: 20px;
+    border-radius: 5px;
   }
 
   .form-field {
@@ -67,7 +74,7 @@
     align-items: center;
     width: 534px;
     height: 55px;
-    border-radius: 20px;
+    border-radius: 5px;
     background-color: #ffffff;
   }
 
@@ -102,7 +109,7 @@
   .form-field__submit {
     width: 100%;
     height: 55px;
-    border-radius: 20px;
+    border-radius: 5px;
     border: none;
     background-color: #3498db;
     text-transform: uppercase;

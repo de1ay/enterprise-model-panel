@@ -1,15 +1,32 @@
 <template>
   <div id="enterprise_panel_main">
+    <enterprise_panel_preloader v-if="!contentLoaded">
+    </enterprise_panel_preloader>
     <enterprise_panel_modal 
       v-if="modal_active" 
       :modal_type="modal_types[selected_module]"
       :modal_active.sync="modal_active"
       :requests.sync="requests"
-      :billings.sync="billings">
+      :billings.sync="billings"
+      :deals.sync="deals"
+      :clients.sync="clients"
+      :media.sync="media">
     </enterprise_panel_modal>
     <div class="menu">
       <div class="brand">
         <span class="brand-text">NullTeam</span>
+      </div>
+      <div class="menu__item"
+           :class="{'menu__item--active': selected_module === 'enterprise_panel_clients'}"
+           @click="selected_module = 'enterprise_panel_clients'">
+        <icon name="user" scale="1" class="menu__item-icon"></icon>
+        <span class="menu__item-text">{{modules_headers_headlines['enterprise_panel_clients']}}</span>
+      </div>
+      <div class="menu__item"
+           :class="{'menu__item--active': selected_module === 'enterprise_panel_media'}"
+           @click="selected_module = 'enterprise_panel_media'">
+        <icon name="television" scale="1" class="menu__item-icon"></icon>
+        <span class="menu__item-text">{{modules_headers_headlines['enterprise_panel_media']}}</span>
       </div>
       <div class="menu__item"
            :class="{'menu__item--active': selected_module === 'enterprise_panel_requests'}"
@@ -35,11 +52,16 @@
         <div class="header-page_name">
           <span class="page_name-text">{{modules_headers_headlines[selected_module]}}</span>
         </div>
-        <div class="header-actions" v-if="selected_module === 'enterprise_panel_requests'">
-          <button @click="modal_active = !modal_active" class="actions__button">Создать заявку</button>
+        <div class="header-actions" v-if="selected_module !== 'enterprise_panel_gantt' || selected_module !== 'enterprise_panel_billings'">
+          <button @click="modal_active = !modal_active" class="actions__button">{{modules_button_text[selected_module]}}</button>
         </div>
       </div>
-      <component :is="selected_module" :requests.sync="requests" :billings.sync="billings"></component>
+      <component :is="selected_module" 
+      :requests.sync="requests" 
+      :billings.sync="billings"
+      :media.sync="media"
+      :deals.sync="deals"
+      :clients.sync="clients"></component>
     </div>
   </div>
 </template>
@@ -49,10 +71,15 @@
   import 'vue-awesome/icons/credit-card'
   import 'vue-awesome/icons/plus'
   import 'vue-awesome/icons/calendar'
-  // import axios from 'axios'
+  import 'vue-awesome/icons/television'
+  import 'vue-awesome/icons/user'
+  import axios from 'axios'
+  import EnterprisePanelPreloader from '@/components/preloader'
   import EnterprisePanelRequests from '@/components/enterprise_panel/modules/enterprise_panel_requests'
   import EnterprisePanelBillings from '@/components/enterprise_panel/modules/enterprise_panel_billings'
   import EnterprisePanelGantt from '@/components/enterprise_panel/modules/enterprise_panel_gantt'
+  import EnterprisePanelClients from '@/components/enterprise_panel/modules/enterprise_panel_clients'
+  import EnterprisePanelMedia from '@/components/enterprise_panel/modules/enterprise_panel_media'
   import EnterprisePanelModal from '@/components/enterprise_panel/enterprise_panel_modal'
   export default {
     name: 'EnterprisePanelMain',
@@ -60,62 +87,97 @@
       return {
         modal_active: false,
         modal_types: {
+          'enterprise_panel_clients': 'enterprise_panel_modal_clients',
+          'enterprise_panel_media': 'enterprise_panel_modal_media',
           'enterprise_panel_requests': 'enterprise_panel_modal_requests',
           'enterprise_panel_billings': 'enterprise_panel_modal_billings',
           'enterprise_panel_gantt': 'enterprise_panel_modal_gantt'
         },
         modules_headers_headlines: {
-          'enterprise_panel_requests': 'Заявки',
+          'enterprise_panel_clients': 'Клиенты',
+          'enterprise_panel_media': 'Медиа',
+          'enterprise_panel_requests': 'Сделки',
           'enterprise_panel_billings': 'Оплата',
           'enterprise_panel_gantt': 'График'
         },
+        modules_button_text: {
+          'enterprise_panel_clients': 'Новый клиент',
+          'enterprise_panel_media': 'Новый медиа-носитель',
+          'enterprise_panel_requests': 'Новая сделка'
+        },
         selected_module: 'enterprise_panel_requests',
-        requests: [
-          {
-            id: 1,
-            customer: 'Таттелеком',
-            place: 'Проспект Победы',
-            brand: 'Летай',
-            sum: 100,
-            duration: 10,
-            status: 'Оплачен',
-            billing_date: '10/12/2017',
-            start_date: '10/17/2017',
-            end_date: '11/12/2017'
-          },
-          {
-            id: 2,
-            customer: 'Ак-Барс Банк',
-            place: 'Ул. Мавлютова',
-            brand: 'Ак-Барс Банк',
-            sum: 80,
-            duration: 6,
-            status: 'В обработке',
-            billing_date: '11/01/2017',
-            start_date: '11/10/2017',
-            end_date: '11/20/2017'
-          }
-        ],
-        billings: [
-          {
-            id: 1,
-            customer: 'Таттелеком',
-            brand: 'Летай',
-            sum: 100,
-            date: '10/12/2017'
-          }
-        ],
-        deals: []
+        requests: [],
+        billings: [],
+        deals: [],
+        media: [],
+        clients: [],
+        contentLoaded: false
       }
     },
     created () {
-      // axios.get('https://beta.project.nullteam.info/api/deals/').then(resp => { this.deals = resp.data })
+      axios.get('https://beta.project.nullteam.info/api/media/').then(resp => { this.media = resp.data })
+      axios.get('https://beta.project.nullteam.info/api/clients/').then(resp => {
+        this.clients = resp.data
+        axios.get('https://beta.project.nullteam.info/api/deals/').then(resp => {
+          this.deals = resp.data
+          this.parseDeals()
+          this.contentLoaded = true
+        })
+      })
     },
     components: {
+      'enterprise_panel_clients': EnterprisePanelClients,
+      'enterprise_panel_media': EnterprisePanelMedia,
       'enterprise_panel_requests': EnterprisePanelRequests,
       'enterprise_panel_billings': EnterprisePanelBillings,
       'enterprise_panel_gantt': EnterprisePanelGantt,
-      'enterprise_panel_modal': EnterprisePanelModal
+      'enterprise_panel_modal': EnterprisePanelModal,
+      'enterprise_panel_preloader': EnterprisePanelPreloader
+    },
+    methods: {
+      parseDeals () {
+        this.deals.forEach(deal => {
+          deal.deal_client = this.findClientByID(deal.deal_client)
+          deal.deal_media = this.findMediaByID(deal.deal_media)
+          deal.deal_period = deal.deal_period.split(';')
+          let dealPeriods = deal.deal_period
+          delete (deal.deal_period)
+          dealPeriods.forEach((dealPeriod, index) => {
+            if (dealPeriod.length > 1) {
+              dealPeriod = dealPeriod.split('-')
+              deal.start_date = dealPeriod[0]
+              deal.end_date = dealPeriod[1]
+              this.requests.push(deal)
+            }
+          })
+        })
+      },
+      findClientByID (clientId) {
+        try {
+          return this.clients.filter((client, index) => {
+            return client.client_id === clientId
+          })[0]
+        } catch (e) {
+          return {
+            client_id: 0,
+            client_name: 'Клиент не найден'
+          }
+        }
+      },
+      findMediaByID (mediaId) {
+        try {
+          return this.media.filter((media, index) => {
+            return media.media_id === mediaId
+          })[0]
+        } catch (e) {
+          return {
+            media_id: 0,
+            media_name: 'Медиа-носитель не найден',
+            media_type: 0,
+            media_address: ''
+          }
+        }
+      }
     }
   }
 </script>

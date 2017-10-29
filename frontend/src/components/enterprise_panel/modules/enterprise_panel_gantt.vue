@@ -15,7 +15,7 @@
 <script>
   export default {
     name: 'EnterprisePanelGantt',
-    props: ['requests', 'billings'],
+    props: ['requests', 'billings', 'media', 'clients', 'deals'],
     data () {
       return {
         packages: ['gantt'],
@@ -85,8 +85,8 @@
           percentComplete = timeToCurrentDate * 100 / duration
         }
         var row = [
-          request.id.toString(),
-          request.customer,
+          request.deal_id.toString(),
+          request.deal_client.client_name,
           null,
           startDate,
           endDate,

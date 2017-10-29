@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <router-view/>
+    <vue-snotify class="enterprise_panel_notifications"></vue-snotify>
   </div>
 </template>
 
@@ -11,6 +12,7 @@ export default {
 </script>
 
 <style>
+  @import "~vue-snotify/styles/material.css";
 
   * {
     font-family: 'Open Sans', sans-serif;
@@ -25,5 +27,7 @@ export default {
     min-height: 100vh;
     min-width: 100vw;
   }
+
+  .enterprise_panel_notifications { z-index: 100000 }
 
 </style>

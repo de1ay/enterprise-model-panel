@@ -27,7 +27,10 @@
     "vue-datasource": "^2.0.5",
     "vue-flatpickr-component": "^4.0.0",
     "vue-good-table": "^1.14.3",
-    "vue-router": "^2.8.1"
+    "vue-multiselect": "^2.0.3",
+    "vue-router": "^2.8.1",
+    "vue-select": "^2.3.0",
+    "vue-snotify": "^2.0.3"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
