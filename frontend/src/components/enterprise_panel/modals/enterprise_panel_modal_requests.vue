@@ -1,5 +1,5 @@
 <template>
-    <div id="enterprise_panel_modal_requests">
+    <form id="enterprise_panel_modal_requests">
         <div class="form-field">
             <multiselect 
                 class="form-field__input"
@@ -67,7 +67,7 @@
         <div class="form-field__actions">
             <input class="form-field__submit" @click.prevent="addRequest" type="submit" value="Создать"/>
         </div>
-    </div>
+    </form>
 </template>
 
 <script>

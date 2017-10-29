@@ -32,7 +32,7 @@
         if (this.login === 'test' && this.password === 'qazwsx123') {
           this.$router.push({name: 'panel_main'})
         } else {
-          this.$snotify.error('Ошибка!', 'Неверный логин/пароль', {
+          this.$snotify.error('Неверный логин/пароль', 'Ошибка!', {
             timeout: 2000,
             showProgressBar: true,
             closeOnClick: true,

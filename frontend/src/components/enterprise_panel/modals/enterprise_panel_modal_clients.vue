@@ -1,5 +1,5 @@
 <template>
-    <div id="enterprise_panel_modal_clients">
+    <form id="enterprise_panel_modal_clients">
         <div class="form-field">
             <input 
             class="form-field__input"
@@ -11,7 +11,7 @@
         <div class="form-field__actions">
             <input class="form-field__submit" @click.prevent="addClient" type="submit" value="Создать"/>
         </div>
-    </div>
+    </form>
 </template>
 
 <script>
