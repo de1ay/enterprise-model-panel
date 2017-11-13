@@ -426,7 +426,7 @@
         background: #ecf0f1;
     }
 
-    .form-field {
+    #enterprise_panel_modal .form-field {
         display: flex;
         flex-direction: row;
         justify-content: center;
@@ -438,17 +438,17 @@
         background-color: #ffffff;
     }
 
-    .form-field:first-child {
+    #enterprise_panel_modal .form-field:first-child {
         margin: 30px 0 15px 0;
     }
 
-    .form-field .fa-icon { color: #95a5a6; }
+    #enterprise_panel_modal .form-field .fa-icon { color: #95a5a6; }
 
-    .form-field .form-field__icon--lock {
+    #enterprise_panel_modal .form-field .form-field__icon--lock {
         margin-top: 4px;
     }
 
-    .form-field .form-field__input {
+    #enterprise_panel_modal .form-field .form-field__input {
         width: 240px;
         height: 35px;
         font-size: 18px;
@@ -457,12 +457,12 @@
         outline: none;
     }
 
-    .form-field .form-field__input::-webkit-input-placeholder { color: #95a5a6; }
-    .form-field .form-field__input:-moz-placeholder { color: #95a5a6; }
-    .form-field .form-field__input::-moz-placeholder { color: #95a5a6; }
-    .form-field .form-field__input:-ms-input-placeholder { color: #95a5a6; }
+    #enterprise_panel_modal .form-field .form-field__input::-webkit-input-placeholder { color: #95a5a6; }
+    #enterprise_panel_modal .form-field .form-field__input:-moz-placeholder { color: #95a5a6; }
+    #enterprise_panel_modal .form-field .form-field__input::-moz-placeholder { color: #95a5a6; }
+    #enterprise_panel_modal .form-field .form-field__input:-ms-input-placeholder { color: #95a5a6; }
 
-    .form-field__input .multiselect__tags {
+    #enterprise_panel_modal .form-field__input .multiselect__tags {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
@@ -474,7 +474,7 @@
         border: none;
     }
 
-    .form-field__input .multiselect__tags input {
+    #enterprise_panel_modal .form-field__input .multiselect__tags input {
         margin: 0;
         padding: 0;
         height: 35px;
@@ -482,9 +482,9 @@
         color: #95a5a6;
     }
 
-    .form-field__input .multiselect__tags input::-webkit-input-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input:-moz-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input::-moz-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input:-ms-input-placeholder { color: #95a5a6; }
+    #enterprise_panel_modal .form-field__input .multiselect__tags input::-webkit-input-placeholder { color: #95a5a6; }
+    #enterprise_panel_modal .form-field__input .multiselect__tags input:-moz-placeholder { color: #95a5a6; }
+    #enterprise_panel_modal .form-field__input .multiselect__tags input::-moz-placeholder { color: #95a5a6; }
+    #enterprise_panel_modal .form-field__input .multiselect__tags input:-ms-input-placeholder { color: #95a5a6; }
 
 </style>

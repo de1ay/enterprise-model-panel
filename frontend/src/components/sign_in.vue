@@ -67,7 +67,7 @@
     border-radius: 5px;
   }
 
-  .form-field {
+  .SignIn .signIn__form .form-field {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -80,18 +80,18 @@
 
   .form-field .fa-icon { color: #95a5a6; }
 
-  .form-field .form-field__icon--user {
+  .SignIn .signIn__form .form-field .form-field__icon--user {
     width: 21px;
     height: 26px;
   }
 
-  .form-field .form-field__icon--lock {
+  .SignIn .signIn__form .form-field .form-field__icon--lock {
     margin-top: 4px;
     width: 21px;
     height: 26px;
   }
 
-  .form-field__input {
+  .SignIn .signIn__form .form-field__input {
     width: 474px;
     height: 52px;
     font-size: 24px;
@@ -106,7 +106,7 @@
   .form-field__input::-moz-placeholder { color: #95a5a6; }
   .form-field__input:-ms-input-placeholder { color: #95a5a6; }
 
-  .form-field__submit {
+  .SignIn .signIn__form .form-field__submit {
     width: 100%;
     height: 55px;
     border-radius: 5px;
@@ -120,9 +120,9 @@
     transition: all 0.3s ease-in-out;
   }
 
-  .form-field__submit:hover {  background: #2980b9; }
+  .SignIn .signIn__form .form-field__submit:hover {  background: #2980b9; }
 
-  .form-field__actions {
+  .SignIn .signIn__form .form-field__actions {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
