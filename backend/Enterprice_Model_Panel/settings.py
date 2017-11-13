@@ -27,7 +27,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     'beta.project.nullteam.info',
-    # 'localhost'
+    'localhost'
 ]
 
 
@@ -40,15 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'deals',
     'clients',
+    'billings',
     'media',
     'rest_framework',
-    # 'corsheaders',
+    #'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
+    #'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -75,7 +76,7 @@ TEMPLATES = [
     },
 ]
 
-# CORS_ORIGIN_ALLOW_ALL = True
+#CORS_ORIGIN_ALLOW_ALL = True
 
 WSGI_APPLICATION = 'Enterprice_Model_Panel.wsgi.application'
 
@@ -88,6 +89,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'entmode',
         'USER': 'root',
+        'PASSWORD': '2929dfd581e1d7d4f89d8131521e4173ccbc0e2ea9be11756cc6693bbd3cf893',
         'HOST': 'postgres',
     }
 }

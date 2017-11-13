@@ -9,6 +9,7 @@
         :rowsPerPageText="rowsPerPage"
         :nextText="nextText"
         :prevText="prevText"
+        :onClick="showBilling"
         :ofText="ofText"/>
     </div>
   </div>
@@ -27,25 +28,30 @@
         billings_columns: [
           {
             label: 'Заказчик',
-            field: 'customer'
+            field: 'billing_deal_info.deal_client.client_name'
           },
           {
             label: 'Бренд',
-            field: 'brand'
+            field: 'billing_deal_info.deal_brand'
           },
           {
             label: 'Сумма',
-            field: 'sum',
+            field: 'billing_sum',
             type: 'number'
           },
           {
             label: 'Дата',
-            field: 'date',
+            field: 'billing_date',
             type: 'date',
             inputFormat: 'MM/DD/YYYY',
             outputFormat: 'DD/MM/YYYY'
           }
         ]
+      }
+    },
+    methods: {
+      showBilling (rowObj, index) {
+        this.$emit('showModal', 'enterprise_panel_billings_view', rowObj)
       }
     }
   }

@@ -2,14 +2,15 @@
   <div id="enterprise_panel_main">
     <enterprise_panel_preloader v-if="!contentLoaded">
     </enterprise_panel_preloader>
-    <enterprise_panel_modal 
-      v-if="modal_active" 
-      :modal_type="modal_types[selected_module]"
+    <enterprise_panel_modal
+      v-if="modal_active"
+      :modal_name="modal_name"
       :modal_active.sync="modal_active"
       :requests.sync="requests"
       :billings.sync="billings"
       :deals.sync="deals"
       :clients.sync="clients"
+      :additional_data="additional_data"
       :media.sync="media">
     </enterprise_panel_modal>
     <div class="menu">
@@ -52,16 +53,17 @@
         <div class="header-page_name">
           <span class="page_name-text">{{modules_headers_headlines[selected_module]}}</span>
         </div>
-        <div class="header-actions" v-if="selected_module !== 'enterprise_panel_gantt' || selected_module !== 'enterprise_panel_billings'">
-          <button @click="modal_active = !modal_active" class="actions__button">{{modules_button_text[selected_module]}}</button>
+        <div class="header-actions" v-if="selected_module !== 'enterprise_panel_gantt'">
+          <button @click="showModal(selected_module + '_add')" class="actions__button">{{modules_button_text[selected_module]}}</button>
         </div>
       </div>
-      <component :is="selected_module" 
-      :requests.sync="requests" 
+      <component :is="selected_module"
+      :requests.sync="requests"
       :billings.sync="billings"
       :media.sync="media"
       :deals.sync="deals"
-      :clients.sync="clients"></component>
+      :clients.sync="clients"
+      @showModal="showModal"></component>
     </div>
   </div>
 </template>
@@ -86,13 +88,8 @@
     data () {
       return {
         modal_active: false,
-        modal_types: {
-          'enterprise_panel_clients': 'enterprise_panel_modal_clients',
-          'enterprise_panel_media': 'enterprise_panel_modal_media',
-          'enterprise_panel_requests': 'enterprise_panel_modal_requests',
-          'enterprise_panel_billings': 'enterprise_panel_modal_billings',
-          'enterprise_panel_gantt': 'enterprise_panel_modal_gantt'
-        },
+        modal_name: '',
+        additional_data: [],
         modules_headers_headlines: {
           'enterprise_panel_clients': 'Клиенты',
           'enterprise_panel_media': 'Медиа',
@@ -103,7 +100,8 @@
         modules_button_text: {
           'enterprise_panel_clients': 'Новый клиент',
           'enterprise_panel_media': 'Новый медиа-носитель',
-          'enterprise_panel_requests': 'Новая сделка'
+          'enterprise_panel_requests': 'Новая сделка',
+          'enterprise_panel_billings': 'Добавить оплату'
         },
         selected_module: 'enterprise_panel_requests',
         requests: [],
@@ -115,13 +113,20 @@
       }
     },
     created () {
-      axios.get('https://beta.project.nullteam.info/api/media/').then(resp => { this.media = resp.data })
+      axios.get('https://beta.project.nullteam.info/api/media/').then(resp => {
+        this.media = resp.data
+        this.parseMedia()
+      })
       axios.get('https://beta.project.nullteam.info/api/clients/').then(resp => {
         this.clients = resp.data
         axios.get('https://beta.project.nullteam.info/api/deals/').then(resp => {
           this.deals = resp.data
           this.parseDeals()
-          this.contentLoaded = true
+          axios.get('https://beta.project.nullteam.info/api/billings/').then(resp => {
+            this.billings = resp.data
+            this.parseBillings()
+            this.contentLoaded = true
+          })
         })
       })
     },
@@ -135,6 +140,33 @@
       'enterprise_panel_preloader': EnterprisePanelPreloader
     },
     methods: {
+      showModal (modalName, additionalData) {
+        this.modal_name = modalName
+        this.modal_active = true
+        this.additional_data = additionalData
+      },
+      parseMedia () {
+        this.media.forEach(item => {
+          item.media_type_info = {
+            value: item.media_type,
+            label: this.parseMediaType(item.media_type)
+          }
+        })
+      },
+      parseMediaType (mediaType) {
+        switch (mediaType) {
+          case '1': return 'Баннер'
+          case '2': return 'Радиостанция'
+          default: return 'Ошибка'
+        }
+      },
+      parseBillings () {
+        this.billings.forEach(billing => {
+          billing.billing_deal_info = this.deals.filter(deal => {
+            return deal.deal_id === billing.billing_deal
+          })[0]
+        })
+      },
       parseDeals () {
         this.deals.forEach(deal => {
           deal.deal_client = this.findClientByID(deal.deal_client)

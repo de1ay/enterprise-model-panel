@@ -19,5 +19,6 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url((r'^api/deals/'), include('deals.urls')),
     url((r'^api/media/'), include('media.urls')),
-    url((r'^api/clients/'), include('clients.urls'))
+    url((r'^api/clients/'), include('clients.urls')),
+    url((r'^api/billings/'), include('billings.urls'))
 ]

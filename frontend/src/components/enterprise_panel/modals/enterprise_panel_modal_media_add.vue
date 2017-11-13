@@ -1,15 +1,15 @@
 <template>
-    <form id="enterprise_panel_modal_requests">
+    <form id="enterprise_panel_modal_media">
         <div class="form-field">
-            <input 
+            <input
             class="form-field__input"
-            v-model.trim="media_name" 
-            type="text" 
+            v-model.trim="media_name"
+            type="text"
             placeholder="Название">
             <icon name="television" scale="1.2" class="form-field__icon--tv"></icon>
         </div>
         <div class="form-field">
-            <multiselect  
+            <multiselect
             class="form-field__input"
             v-model="media_type"
             :options="media_types"
@@ -21,10 +21,10 @@
             <icon name="bullhorn" scale="1.2" class="form-field__icon--bullhorn"></icon>
         </div>
         <div class="form-field">
-            <input 
+            <input
             class="form-field__input"
-            v-model.trim.number="media_address" 
-            type="text" 
+            v-model.trim.number="media_address"
+            type="text"
             placeholder="Адрес">
             <icon name="globe" scale="1.2" class="form-field__icon--globe"></icon>
         </div>
@@ -39,7 +39,7 @@
   import 'vue-awesome/icons/television'
   import 'vue-awesome/icons/bullhorn'
   export default {
-    name: 'EnterprisePanelModalMedia',
+    name: 'EnterprisePanelModalMediaAdd',
     props: ['requests', 'billings', 'clients', 'media', 'deals'],
     data () {
       return {
@@ -72,50 +72,14 @@
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
-<style>
+<style scoped>
 
-    #enterprise_panel_modal_requests {
+    #enterprise_panel_modal_media {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
-
-    .form-field {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        margin: 15px 0;
-        width: 300px;
-        height: 38px;
-        border-radius: 5px;
-        background-color: #ffffff;
-    }
-
-    .form-field:first-child {
-        margin: 30px 0 15px 0;
-    }
-
-    .form-field .fa-icon { color: #95a5a6; }
-
-    .form-field .form-field__icon--lock {
-        margin-top: 4px;
-    }
-
-    .form-field__input {
-        width: 240px;
-        height: 35px;
-        font-size: 18px;
-        color: #95a5a6;
-        border: none;
-        outline: none;
-    }
-
-    .form-field__input::-webkit-input-placeholder { color: #95a5a6; }
-    .form-field__input:-moz-placeholder { color: #95a5a6; }
-    .form-field__input::-moz-placeholder { color: #95a5a6; }
-    .form-field__input:-ms-input-placeholder { color: #95a5a6; }
 
     .form-field__submit {
         width: 100%;
@@ -141,30 +105,5 @@
         margin: 15px 0 30px 0;
         width: 300px;
     }
-
-    .form-field__input .multiselect__tags {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 0;
-        margin: 2px 0;
-        min-height: 35px;
-        max-height: 35px;
-        border: none;
-    }
-
-    .form-field__input .multiselect__tags input {
-        margin: 0;
-        padding: 0;
-        height: 35px;
-        font-size: 18px;
-        color: #95a5a6;
-    }
-
-    .form-field__input .multiselect__tags input::-webkit-input-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input:-moz-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input::-moz-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input:-ms-input-placeholder { color: #95a5a6; }
 
 </style>

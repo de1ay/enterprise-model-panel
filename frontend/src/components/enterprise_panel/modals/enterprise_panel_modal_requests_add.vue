@@ -1,7 +1,7 @@
 <template>
     <form id="enterprise_panel_modal_requests">
         <div class="form-field">
-            <multiselect 
+            <multiselect
                 class="form-field__input"
                 v-model="deal_client"
                 :options="clients"
@@ -13,15 +13,15 @@
             <icon name="user" scale="1.2" class="form-field__icon--user"></icon>
         </div>
         <div class="form-field">
-            <input 
+            <input
             class="form-field__input"
-            v-model.trim="deal_brand" 
-            type="text" 
+            v-model.trim="deal_brand"
+            type="text"
             placeholder="Бренд">
             <icon name="newspaper-o" scale="1.2" class="form-field__icon--lock"></icon>
         </div>
         <div class="form-field">
-            <multiselect  
+            <multiselect
             class="form-field__input"
             v-model="deal_media"
             :options="media"
@@ -33,33 +33,33 @@
             <icon name="globe" scale="1.2" class="form-field__icon--globe"></icon>
         </div>
         <div class="form-field">
-            <input 
+            <input
             class="form-field__input"
-            v-model.trim.number="deal_sum" 
-            type="number" 
+            v-model.trim.number="deal_sum"
+            type="number"
             placeholder="Сумма">
             <icon name="money" scale="1.2" class="form-field__icon--money"></icon>
         </div>
         <div class="form-field">
-            <input 
-            class="form-field__input" 
-            v-model.trim.number="deal_time" 
-            type="number" 
+            <input
+            class="form-field__input"
+            v-model.trim.number="deal_time"
+            type="number"
             placeholder="Длительность">
             <icon name="clock-o" scale="1.2" class="form-field__icon--clock"></icon>
         </div>
         <div class="form-field">
-            <flat-pickr 
-            v-model="start_date" 
-            class="form-field__input" 
+            <flat-pickr
+            v-model="start_date"
+            class="form-field__input"
             :config="date_config"
             placeholder="Начальная дата"></flat-pickr>
             <icon name="flag-o" scale="1.2" class="form-field__icon--flag"></icon>
         </div>
         <div class="form-field">
-            <flat-pickr 
-            v-model="end_date" 
-            class="form-field__input" 
+            <flat-pickr
+            v-model="end_date"
+            class="form-field__input"
             :config="date_config"
             placeholder="Конечная дата"></flat-pickr>
             <icon name="flag-checkered" scale="1.2" class="form-field__icon--flag"></icon>
@@ -81,7 +81,7 @@
   import 'flatpickr/dist/flatpickr.css'
   import {Russian} from 'flatpickr/dist/l10n/ru'
   export default {
-    name: 'EnterprisePanelModalRequests',
+    name: 'EnterprisePanelModalRequestsAdd',
     props: ['requests', 'billings', 'clients', 'media', 'deals'],
     data () {
       return {
@@ -123,7 +123,7 @@
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
-<style>
+<style scoped>
 
     #enterprise_panel_modal_requests {
         display: flex;
@@ -131,42 +131,6 @@
         justify-content: center;
         align-items: center;
     }
-
-    .form-field {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        margin: 15px 0;
-        width: 300px;
-        height: 38px;
-        border-radius: 5px;
-        background-color: #ffffff;
-    }
-
-    .form-field:first-child {
-        margin: 30px 0 15px 0;
-    }
-
-    .form-field .fa-icon { color: #95a5a6; }
-
-    .form-field .form-field__icon--lock {
-        margin-top: 4px;
-    }
-
-    .form-field__input {
-        width: 240px;
-        height: 35px;
-        font-size: 18px;
-        color: #95a5a6;
-        border: none;
-        outline: none;
-    }
-
-    .form-field__input::-webkit-input-placeholder { color: #95a5a6; }
-    .form-field__input:-moz-placeholder { color: #95a5a6; }
-    .form-field__input::-moz-placeholder { color: #95a5a6; }
-    .form-field__input:-ms-input-placeholder { color: #95a5a6; }
 
     .form-field__submit {
         width: 100%;
@@ -192,30 +156,5 @@
         margin: 15px 0 30px 0;
         width: 300px;
     }
-
-    .form-field__input .multiselect__tags {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 0;
-        margin: 2px 0;
-        min-height: 35px;
-        max-height: 35px;
-        border: none;
-    }
-
-    .form-field__input .multiselect__tags input {
-        margin: 0;
-        padding: 0;
-        height: 35px;
-        font-size: 18px;
-        color: #95a5a6;
-    }
-
-    .form-field__input .multiselect__tags input::-webkit-input-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input:-moz-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input::-moz-placeholder { color: #95a5a6; }
-    .form-field__input .multiselect__tags input:-ms-input-placeholder { color: #95a5a6; }
 
 </style>

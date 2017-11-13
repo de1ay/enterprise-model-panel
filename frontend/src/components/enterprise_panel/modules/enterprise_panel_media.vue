@@ -9,14 +9,13 @@
         :rowsPerPageText="rowsPerPage"
         :nextText="nextText"
         :prevText="prevText"
-        :onClick="deleteMediaConfirm"
+        :onClick="showMedia"
         :ofText="ofText"/>
     </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios'
   export default {
     name: 'EnterprisePanelMedia',
     props: ['requests', 'billings', 'media', 'clients', 'deals'],
@@ -50,52 +49,8 @@
           default: return 'Ошибка'
         }
       },
-      deleteMediaConfirm (rowObj, index) {
-        this.$snotify.confirm('Удалить медиа-носитель?', 'Удаление', {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {text: 'Да', action: (notifyId) => { this.deleteMedia(rowObj); this.$snotify.remove(notifyId) }},
-            {text: 'Нет', action: (notifyId) => this.$snotify.remove(notifyId)}
-          ]
-        })
-      },
-      deleteMedia (rowObj) {
-        this.$snotify.async(
-          'Запрос выполняется',
-          'Подождите...',
-          () => new Promise((resolve, reject) => {
-            axios.delete('https://beta.project.nullteam.info/api/media/' + rowObj.media_id).then(resp => {
-              this.media.splice(this.media.indexOf(rowObj))
-              this.$emit('update:media', this.media)
-              resolve({
-                title: 'Успешно',
-                body: 'Медиа-носитель удален',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-            }).catch(resp => {
-              /*eslint-disable */
-              reject({
-                title: 'Ошибка!',
-                body: 'Медиа-носитель не удален',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-              /*eslint-enable */
-            })
-          }
-        ))
+      showMedia (rowObj, index) {
+        this.$emit('showModal', 'enterprise_panel_media_view', rowObj)
       }
     }
   }

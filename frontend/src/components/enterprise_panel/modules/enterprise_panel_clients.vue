@@ -9,14 +9,13 @@
         :rowsPerPageText="rowsPerPage"
         :nextText="nextText"
         :prevText="prevText"
-        :onClick="deleteClientConfirm"
+        :onClick="showClient"
         :ofText="ofText"/>
     </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios'
   export default {
     name: 'EnterprisePanelClients',
     props: ['requests', 'billings', 'media', 'clients', 'deals'],
@@ -35,52 +34,8 @@
       }
     },
     methods: {
-      deleteClientConfirm (rowObj, index) {
-        this.$snotify.confirm('Удалить клиента?', 'Удаление', {
-          timeout: 2000,
-          showProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: true,
-          buttons: [
-            {text: 'Да', action: (notifyId) => { this.deleteClient(rowObj); this.$snotify.remove(notifyId) }},
-            {text: 'Нет', action: (notifyId) => this.$snotify.remove(notifyId)}
-          ]
-        })
-      },
-      deleteClient (rowObj) {
-        this.$snotify.async(
-          'Запрос выполняется',
-          'Подождите...',
-          () => new Promise((resolve, reject) => {
-            axios.delete('https://beta.project.nullteam.info/api/clients/' + rowObj.client_id).then(resp => {
-              this.clients.splice(this.clients.indexOf(rowObj))
-              this.$emit('update:clients', this.clients)
-              resolve({
-                title: 'Успешно',
-                body: 'Клиент удален',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-            }).catch(resp => {
-              /*eslint-disable */
-              reject({
-                title: 'Ошибка!',
-                body: 'Клиент не удален',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-              /*eslint-enable */
-            })
-          }
-        ))
+      showClient (rowObj, index) {
+        this.$emit('showModal', 'enterprise_panel_clients_view', rowObj)
       }
     }
   }
