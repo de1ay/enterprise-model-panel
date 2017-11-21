@@ -5,7 +5,7 @@ from .views import ClientAPI
 
 urlpatterns = [
     url(r'^$', ClientsAPI.as_view()),
-    url(r'^(?P<id>[0-9]+)/$', ClientAPI.as_view())
+    url(r'^(?P<id>[0-9]+)$', ClientAPI.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

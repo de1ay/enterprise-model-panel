@@ -14,7 +14,8 @@ class DealSerializer(serializers.ModelSerializer):
         'deal_brand',
         'deal_media', 
         'deal_sum', 
-        'deal_time', 
+        'deal_time',
+        'deal_type',
         'deal_period',
         'deal_paid',
         'deal_status')

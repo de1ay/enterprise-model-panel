@@ -18,7 +18,7 @@
   import 'vue-awesome/icons/user'
   export default {
     name: 'EnterprisePanelModalClientsAdd',
-    props: ['requests', 'billings', 'clients', 'media', 'deals'],
+    props: ['billings', 'clients', 'media', 'deals'],
     data () {
       return {
         client_name: ''

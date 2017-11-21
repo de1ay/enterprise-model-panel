@@ -23,13 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '9z1&pn!+6x@#7w^vr8z23&e82*5@^lo5%zpk7wygo)6bzx5(%a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'beta.project.nullteam.info',
     'localhost'
 ]
-
 
 # Application definition
 

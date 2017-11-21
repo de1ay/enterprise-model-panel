@@ -10,4 +10,5 @@ class BillingSerializer(serializers.ModelSerializer):
         fields = ('billing_id',
         'billing_deal',
         'billing_sum',
-        'billing_date')
+        'billing_date',
+        'billing_transfer_date')

@@ -10,7 +10,9 @@
         :nextText="nextText"
         :prevText="prevText"
         :onClick="showMedia"
-        :ofText="ofText"/>
+        :ofText="ofText">
+        <div slot="emptystate">Медиа-носители отсутствуют</div>
+      </vue-good-table>
     </div>
   </div>
 </template>
@@ -18,7 +20,7 @@
 <script>
   export default {
     name: 'EnterprisePanelMedia',
-    props: ['requests', 'billings', 'media', 'clients', 'deals'],
+    props: ['billings', 'media', 'clients', 'deals'],
     data () {
       return {
         ofText: 'из',

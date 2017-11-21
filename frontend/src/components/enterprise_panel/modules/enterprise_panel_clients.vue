@@ -10,7 +10,9 @@
         :nextText="nextText"
         :prevText="prevText"
         :onClick="showClient"
-        :ofText="ofText"/>
+        :ofText="ofText">
+        <div slot="emptystate">Клиенты отсутствуют</div>
+      </vue-good-table>
     </div>
   </div>
 </template>
@@ -18,7 +20,7 @@
 <script>
   export default {
     name: 'EnterprisePanelClients',
-    props: ['requests', 'billings', 'media', 'clients', 'deals'],
+    props: ['billings', 'media', 'clients', 'deals'],
     data () {
       return {
         ofText: 'из',

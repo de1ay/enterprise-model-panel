@@ -10,7 +10,9 @@
         :nextText="nextText"
         :prevText="prevText"
         :onClick="showBilling"
-        :ofText="ofText"/>
+        :ofText="ofText">
+        <div slot="emptystate">Олпаты отсутствуют</div>
+      </vue-good-table>
     </div>
   </div>
 </template>
@@ -18,7 +20,7 @@
 <script>
   export default {
     name: 'EnterprisePanelBillings',
-    props: ['requests', 'billings'],
+    props: ['billings'],
     data () {
       return {
         ofText: 'из',
@@ -28,22 +30,29 @@
         billings_columns: [
           {
             label: 'Заказчик',
-            field: 'billing_deal_info.deal_client.client_name'
+            field: 'billing_deal_info.deal_client_info.client_name'
           },
           {
             label: 'Бренд',
             field: 'billing_deal_info.deal_brand'
           },
           {
-            label: 'Сумма',
+            label: 'Дата оплаты',
+            field: 'billing_date',
+            type: 'date',
+            inputFormat: 'DD/MM/YYYY',
+            outputFormat: 'DD/MM/YYYY'
+          },
+          {
+            label: 'Перечислено',
             field: 'billing_sum',
             type: 'number'
           },
           {
-            label: 'Дата',
-            field: 'billing_date',
+            label: 'Дата перечисления',
+            field: 'billing_transfer_date',
             type: 'date',
-            inputFormat: 'MM/DD/YYYY',
+            inputFormat: 'DD/MM/YYYY',
             outputFormat: 'DD/MM/YYYY'
           }
         ]

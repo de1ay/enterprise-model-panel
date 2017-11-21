@@ -6,6 +6,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.views import Http404
 from rest_framework import status
 
+
 class BillingsAPI(APIView):
 
     renderer_classes = (JSONRenderer, )
@@ -18,9 +19,12 @@ class BillingsAPI(APIView):
     def post(self, request, format=None):
         billing_serializer = BillingSerializer(data=request.data)
         if billing_serializer.is_valid():
-            billing_serializer.save()
+            billing = billing_serializer.save()
+            related_deal = billing.billing_deal
+            related_deal.change_paid_value(billing.billing_sum)
             return Response(billing_serializer.data, status=status.HTTP_201_CREATED)
         return Response(billing_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class BillingAPI(APIView):
 
@@ -41,11 +45,15 @@ class BillingAPI(APIView):
         billing = self.get_object(id)
         billing_serializer = BillingSerializer(billing, data=request.data)
         if billing_serializer.is_valid():
-            billing_serializer.save()
+            new_billing = billing_serializer.save()
+            related_deal = billing.billing_deal
+            related_deal.change_paid_value(new_billing.billing_sum - billing.billing_sum)
             return Response(billing_serializer.data)
         return Response(billing_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id, format=None):
         billing = self.get_object(id)
+        related_deal = billing.billing_deal
+        related_deal.change_paid_value(billing.billing_sum * -1)
         billing.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

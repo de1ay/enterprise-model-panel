@@ -13,9 +13,10 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     name: 'EnterprisePanelGantt',
-    props: ['requests', 'billings', 'media', 'clients', 'deals'],
+    props: ['billings', 'media', 'clients', 'deals'],
     data () {
       return {
         packages: ['gantt'],
@@ -74,27 +75,32 @@
         rows: []
       }
     },
-    mounted () {
-      this.requests.forEach((request, index) => {
-        var startDate = new Date(request.start_date)
-        var endDate = new Date(request.end_date)
-        var duration = new Date(endDate - startDate)
-        var percentComplete = 0
-        if (new Date() > startDate) {
-          var timeToCurrentDate = new Date(new Date() - startDate)
-          percentComplete = timeToCurrentDate * 100 / duration
-        }
-        var row = [
-          request.deal_id.toString(),
-          request.deal_client.client_name,
-          null,
-          startDate,
-          endDate,
-          null,
-          percentComplete,
-          null
-        ]
-        this.rows.push(row)
+    created () {
+      this.deals.forEach((deal, index) => {
+        deal.deal_periods.forEach((period, periodIndex) => {
+          let startDate = moment(period.period_start, 'DD/MM/YYYY').toDate()
+          let endDate = moment(period.period_end, 'DD/MM/YYYY').toDate()
+          let duration = new Date(endDate - startDate)
+          let percentComplete = 0
+          if (new Date() > startDate) {
+            let timeToCurrentDate = new Date(new Date() - startDate)
+            percentComplete = timeToCurrentDate * 100 / duration
+            if (percentComplete > 100) {
+              percentComplete = 100
+            }
+          }
+          let row = [
+            deal.deal_id.toString() + periodIndex.toString(),
+            deal.deal_brand,
+            deal.deal_client.client_name,
+            startDate,
+            endDate,
+            null,
+            percentComplete,
+            null
+          ]
+          this.rows.push(row)
+        })
       })
     }
   }

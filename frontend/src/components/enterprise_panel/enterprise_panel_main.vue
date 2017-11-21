@@ -6,7 +6,6 @@
       v-if="modal_active"
       :modal_name="modal_name"
       :modal_active.sync="modal_active"
-      :requests.sync="requests"
       :billings.sync="billings"
       :deals.sync="deals"
       :clients.sync="clients"
@@ -30,10 +29,10 @@
         <span class="menu__item-text">{{modules_headers_headlines['enterprise_panel_media']}}</span>
       </div>
       <div class="menu__item"
-           :class="{'menu__item--active': selected_module === 'enterprise_panel_requests'}"
-           @click="selected_module = 'enterprise_panel_requests'">
+           :class="{'menu__item--active': selected_module === 'enterprise_panel_deals'}"
+           @click="selected_module = 'enterprise_panel_deals'">
         <icon name="pencil-square-o" scale="1" class="menu__item-icon"></icon>
-        <span class="menu__item-text">{{modules_headers_headlines['enterprise_panel_requests']}}</span>
+        <span class="menu__item-text">{{modules_headers_headlines['enterprise_panel_deals']}}</span>
       </div>
       <div class="menu__item"
            :class="{'menu__item--active': selected_module === 'enterprise_panel_billings'}"
@@ -58,7 +57,6 @@
         </div>
       </div>
       <component :is="selected_module"
-      :requests.sync="requests"
       :billings.sync="billings"
       :media.sync="media"
       :deals.sync="deals"
@@ -76,8 +74,9 @@
   import 'vue-awesome/icons/television'
   import 'vue-awesome/icons/user'
   import axios from 'axios'
+  import moment from 'moment'
   import EnterprisePanelPreloader from '@/components/preloader'
-  import EnterprisePanelRequests from '@/components/enterprise_panel/modules/enterprise_panel_requests'
+  import EnterprisePanelDeals from '@/components/enterprise_panel/modules/enterprise_panel_deals'
   import EnterprisePanelBillings from '@/components/enterprise_panel/modules/enterprise_panel_billings'
   import EnterprisePanelGantt from '@/components/enterprise_panel/modules/enterprise_panel_gantt'
   import EnterprisePanelClients from '@/components/enterprise_panel/modules/enterprise_panel_clients'
@@ -93,18 +92,17 @@
         modules_headers_headlines: {
           'enterprise_panel_clients': 'Клиенты',
           'enterprise_panel_media': 'Медиа',
-          'enterprise_panel_requests': 'Сделки',
+          'enterprise_panel_deals': 'Сделки',
           'enterprise_panel_billings': 'Оплата',
           'enterprise_panel_gantt': 'График'
         },
         modules_button_text: {
           'enterprise_panel_clients': 'Новый клиент',
           'enterprise_panel_media': 'Новый медиа-носитель',
-          'enterprise_panel_requests': 'Новая сделка',
+          'enterprise_panel_deals': 'Новая сделка',
           'enterprise_panel_billings': 'Добавить оплату'
         },
-        selected_module: 'enterprise_panel_requests',
-        requests: [],
+        selected_module: 'enterprise_panel_deals',
         billings: [],
         deals: [],
         media: [],
@@ -125,6 +123,9 @@
           axios.get('https://beta.project.nullteam.info/api/billings/').then(resp => {
             this.billings = resp.data
             this.parseBillings()
+            if (this.$cookie.get('last_page') !== 'null') {
+              this.selected_module = this.$cookie.get('last_page')
+            }
             this.contentLoaded = true
           })
         })
@@ -133,7 +134,7 @@
     components: {
       'enterprise_panel_clients': EnterprisePanelClients,
       'enterprise_panel_media': EnterprisePanelMedia,
-      'enterprise_panel_requests': EnterprisePanelRequests,
+      'enterprise_panel_deals': EnterprisePanelDeals,
       'enterprise_panel_billings': EnterprisePanelBillings,
       'enterprise_panel_gantt': EnterprisePanelGantt,
       'enterprise_panel_modal': EnterprisePanelModal,
@@ -160,6 +161,31 @@
           default: return 'Ошибка'
         }
       },
+      parseDealType (dealType) {
+        switch (dealType) {
+          case '0': return {
+            type_id: dealType,
+            type_name: 'Размещение'
+          }
+          case '1': return {
+            type_id: dealType,
+            type_name: 'Сбыт'
+          }
+          case '2': return {
+            type_id: dealType,
+            type_name: 'Изготовление'
+          }
+          case '3': return {
+            type_id: dealType,
+            type_name: 'Реализация'
+          }
+          case '4': return {
+            type_id: dealType,
+            type_name: 'Бартер'
+          }
+          default: return 'Ошибка!'
+        }
+      },
       parseBillings () {
         this.billings.forEach(billing => {
           billing.billing_deal_info = this.deals.filter(deal => {
@@ -169,19 +195,37 @@
       },
       parseDeals () {
         this.deals.forEach(deal => {
-          deal.deal_client = this.findClientByID(deal.deal_client)
-          deal.deal_media = this.findMediaByID(deal.deal_media)
-          deal.deal_period = deal.deal_period.split(';')
-          let dealPeriods = deal.deal_period
-          delete (deal.deal_period)
+          deal.deal_client_info = this.findClientByID(deal.deal_client)
+          deal.deal_media_info = this.findMediaByID(deal.deal_media)
+          deal.deal_type_info = this.parseDealType(deal.deal_type)
+          let dealPeriods = deal.deal_period.split(';')
+          deal.deal_periods = []
+          let dates = []
           dealPeriods.forEach((dealPeriod, index) => {
             if (dealPeriod.length > 1) {
               dealPeriod = dealPeriod.split('-')
-              deal.start_date = dealPeriod[0]
-              deal.end_date = dealPeriod[1]
-              this.requests.push(deal)
+              dates.push(dealPeriod[0])
+              dates.push(dealPeriod[1])
+              deal.deal_periods.push({
+                period_start: dealPeriod[0],
+                period_end: dealPeriod[1],
+                period_date: dealPeriod[0] + '-' + dealPeriod[1]
+              })
             }
           })
+          dates = dates.sort((date1, date2) => {
+            return moment(date1, 'DD/MM/YYYY').toDate() > moment(date2, 'DD/MM/YYYY').toDate()
+          })
+          deal.start_date = dates[0]
+          deal.end_date = dates[dates.length - 1]
+          if (deal.deal_status === '2' && new Date() > moment(deal.start_date, 'DD/MM/YYYY').toDate() && new Date() < moment(deal.end_date, 'DD/MM/YYYY').toDate()) {
+            deal.deal_status = '3'
+            axios.put('https://beta.project.nullteam.info/api/deals/' + deal.deal_id, deal)
+          }
+          if (deal.deal_status !== '4' && new Date() > moment(deal.end_date, 'DD/MM/YYYY').toDate()) {
+            deal.deal_status = '4'
+            axios.put('https://beta.project.nullteam.info/api/deals/' + deal.deal_id, deal)
+          }
         })
       },
       findClientByID (clientId) {
@@ -209,6 +253,11 @@
             media_address: ''
           }
         }
+      }
+    },
+    watch: {
+      selected_module: function (newSelect) {
+        this.$cookie.set('last_page', newSelect, 365)
       }
     }
   }

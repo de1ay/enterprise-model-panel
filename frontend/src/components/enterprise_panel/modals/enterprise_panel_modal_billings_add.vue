@@ -17,7 +17,7 @@
             class="form-field__input"
             v-model.trim.number="billing_sum"
             type="number"
-            placeholder="Сумма">
+            placeholder="Перечислено">
             <icon name="money" scale="1.2" class="form-field__icon--money"></icon>
         </div>
         <div class="form-field">
@@ -26,7 +26,15 @@
             class="form-field__input"
             :config="date_config"
             placeholder="Дата оплаты"></flat-pickr>
-            <icon name="calendar-o" scale="1.2" class="form-field__icon--calendar"></icon>
+            <icon name="flag-o" scale="1.2" class="form-field__icon--flag"></icon>
+        </div>
+        <div class="form-field">
+            <flat-pickr
+            v-model="billing_transfer_date"
+            class="form-field__input"
+            :config="date_config"
+            placeholder="Дата перечисления"></flat-pickr>
+            <icon name="flag-checkered" scale="1.2" class="form-field__icon--flag"></icon>
         </div>
         <div class="form-field__actions">
             <input class="form-field__submit" @click.prevent="addBilling" type="submit" value="Создать"/>
@@ -37,22 +45,22 @@
 <script>
   import 'vue-awesome/icons/handshake-o'
   import 'vue-awesome/icons/money'
-  import 'vue-awesome/icons/calendar-o'
+  import 'vue-awesome/icons/flag-o'
+  import 'vue-awesome/icons/flag-checkered'
   import flatPickr from 'vue-flatpickr-component'
   import 'flatpickr/dist/flatpickr.css'
   import {Russian} from 'flatpickr/dist/l10n/ru'
   export default {
     name: 'EnterprisePanelModalBillingAdd',
-    props: ['requests', 'billings', 'clients', 'media', 'deals'],
+    props: ['billings', 'clients', 'media', 'deals'],
     data () {
       return {
         billing_deal: null,
         billing_date: '',
-        billing_sum: 0,
+        billing_sum: '',
+        billing_transfer_date: '',
         date_config: {
-          altFormat: 'd/m/Y',
-          altInput: true,
-          dateFormat: 'm/d/Y',
+          dateFormat: 'd/m/Y',
           locale: Russian
         }
       }
@@ -63,7 +71,8 @@
           billing_deal_info: this.billing_deal,
           billing_date: this.billing_date,
           billing_deal: this.billing_deal.deal_id,
-          billing_sum: this.billing_sum
+          billing_sum: this.billing_sum,
+          billing_transfer_date: this.billing_transfer_date
         })
       }
     },

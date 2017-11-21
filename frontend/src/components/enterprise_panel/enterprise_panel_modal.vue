@@ -3,18 +3,17 @@
     <div class="modal">
       <component
         :is="modal_name"
-        :requests.sync="requests"
         :billings.sync="billings"
         :media.sync="media"
         :deals.sync="deals"
         :clients.sync="clients"
         :additional_data="additional_data"
         @hideModal="hideModal"
-        @addRequest="addRequest"
+        @addDeal="addDeal"
         @addMedia="addMedia"
         @addClient="addClient"
         @addBilling="addBilling"
-        @editRequest="editRequest"
+        @editDeal="editDeal"
         @editMedia="editMedia"
         @editClient="editClient"
         @editBilling="editBilling">
@@ -25,8 +24,8 @@
 
 <script>
   import axios from 'axios'
-  import EnterprisePanelModalRequestsView from '@/components/enterprise_panel/modals/enterprise_panel_modal_requests_view'
-  import EnterprisePanelModalRequestsAdd from '@/components/enterprise_panel/modals/enterprise_panel_modal_requests_add'
+  import EnterprisePanelModalDealsView from '@/components/enterprise_panel/modals/enterprise_panel_modal_deals_view'
+  import EnterprisePanelModalDealsAdd from '@/components/enterprise_panel/modals/enterprise_panel_modal_deals_add'
   import EnterprisePanelModalClientsView from '@/components/enterprise_panel/modals/enterprise_panel_modal_clients_view'
   import EnterprisePanelModalClientsAdd from '@/components/enterprise_panel/modals/enterprise_panel_modal_clients_add'
   import EnterprisePanelModalMediaAdd from '@/components/enterprise_panel/modals/enterprise_panel_modal_media_add'
@@ -35,10 +34,10 @@
   import EnterprisePanelModalBillingsAdd from '@/components/enterprise_panel/modals/enterprise_panel_modal_billings_add'
   export default {
     name: 'EnterprisePanelModal',
-    props: ['requests', 'billings', 'modal_name', 'modal_active', 'media', 'clients', 'deals', 'additional_data'],
+    props: ['billings', 'modal_name', 'modal_active', 'media', 'clients', 'deals', 'additional_data'],
     components: {
-      'enterprise_panel_requests_view': EnterprisePanelModalRequestsView,
-      'enterprise_panel_requests_add': EnterprisePanelModalRequestsAdd,
+      'enterprise_panel_deals_view': EnterprisePanelModalDealsView,
+      'enterprise_panel_deals_add': EnterprisePanelModalDealsAdd,
       'enterprise_panel_clients_view': EnterprisePanelModalClientsView,
       'enterprise_panel_clients_add': EnterprisePanelModalClientsAdd,
       'enterprise_panel_media_view': EnterprisePanelModalMediaView,
@@ -55,37 +54,24 @@
           this.$emit('update:modal_active', false)
         }
       },
-      addRequest (deal) {
-        deal.deal_period = deal.start_date + '-' + deal.end_date + ';'
+      addDeal (deal) {
         this.$snotify.async(
           'Запрос выполняется',
           'Подождите...',
           () => new Promise((resolve, reject) => {
             axios.post('https://beta.project.nullteam.info/api/deals/', {
-              deal_client: deal.deal_client.client_id,
+              deal_client: deal.deal_client,
               deal_brand: deal.deal_brand,
-              deal_media: deal.deal_media.media_id,
+              deal_media: deal.deal_media,
               deal_period: deal.deal_period,
               deal_time: deal.deal_time,
               deal_status: deal.deal_status,
               deal_sum: deal.deal_sum,
-              deal_paid: deal.deal_paid
+              deal_paid: deal.deal_paid,
+              deal_type: deal.deal_type
             }).then(resp => {
-              this.deals.push(resp.data)
-              this.$emit('update:deals', this.deals)
-              this.requests.push({
-                deal_id: resp.data.deal_id,
-                deal_client: deal.deal_client,
-                deal_brand: deal.deal_brand,
-                deal_media: deal.deal_media,
-                deal_period: deal.deal_period,
-                deal_time: deal.deal_time,
-                deal_status: deal.deal_status,
-                deal_sum: deal.deal_sum,
-                deal_paid: deal.deal_paid,
-                start_date: deal.start_date,
-                end_date: deal.end_date
-              })
+              deal.deal_id = resp.data.deal_id
+              this.deals.push(deal)
               resolve({
                 title: 'Успешно',
                 body: 'Сделка добавлена',
@@ -112,25 +98,26 @@
             })
           }
         ))
-        this.$emit('update:requests', this.requests)
+        this.$emit('update:deals', this.deals)
         this.$emit('update:modal_active', false)
       },
-      editRequest (newRequest, originalRequest) {
+      editDeal (newDeal, originalDeal) {
         this.$snotify.async(
           'Запрос выполняется',
           'Подождите...',
           () => new Promise((resolve, reject) => {
-            axios.put('https://beta.project.nullteam.info/api/deals/' + newRequest.deal_id, {
-              deal_client: newRequest.deal_client.client_id,
-              deal_brand: newRequest.deal_brand,
-              deal_media: newRequest.deal_media.media_id,
-              deal_period: newRequest.start_date + '-' + newRequest.end_date + ';',
-              deal_time: newRequest.deal_time,
-              deal_status: newRequest.deal_status,
-              deal_sum: newRequest.deal_sum,
-              deal_paid: newRequest.deal_paid
+            axios.put('https://beta.project.nullteam.info/api/deals/' + newDeal.deal_id, {
+              deal_client: newDeal.deal_client,
+              deal_brand: newDeal.deal_brand,
+              deal_media: newDeal.deal_media,
+              deal_period: newDeal.deal_period,
+              deal_time: newDeal.deal_time,
+              deal_type: newDeal.deal_type,
+              deal_status: newDeal.deal_status,
+              deal_sum: newDeal.deal_sum,
+              deal_paid: newDeal.deal_paid
             }).then(resp => {
-              originalRequest = Object.assign(originalRequest, newRequest)
+              originalDeal = Object.assign(originalDeal, newDeal)
               resolve({
                 title: 'Успешно',
                 body: 'Сделка изменена',
@@ -169,7 +156,13 @@
               media_address: media.media_address,
               media_type: media.media_type
             }).then(resp => {
-              this.media.push(resp.data)
+              this.media.push({
+                media_id: resp.data.media_id,
+                media_name: media.media_name,
+                media_address: media.media_address,
+                media_type: media.media_type,
+                media_type_info: media.media_type_info
+              })
               this.$emit('update:media', this.media)
               resolve({
                 title: 'Успешно',
@@ -245,16 +238,28 @@
             axios.post('https://beta.project.nullteam.info/api/billings/', {
               billing_deal: billing.billing_deal,
               billing_sum: billing.billing_sum,
-              billing_date: billing.billing_date
+              billing_date: billing.billing_date,
+              billing_transfer_date: billing.billing_transfer_date
             }).then(resp => {
               this.billings.push({
                 billing_id: resp.data.billing_id,
                 billing_sum: resp.data.billing_sum,
                 billing_date: resp.data.billing_date,
+                billing_transfer_date: billing.billing_transfer_date,
                 billing_deal: resp.data.billing_deal,
                 billing_deal_info: billing.billing_deal_info
               })
               this.$emit('update:billings', this.billings)
+              let relatedDeal = this.deals.filter(deal => {
+                return deal.deal_id === billing.billing_deal
+              })[0]
+              relatedDeal.deal_paid += billing.billing_sum
+              if (relatedDeal.deal_paid >= relatedDeal.deal_sum) {
+                relatedDeal.deal_status = '2'
+              } else {
+                relatedDeal.deal_status = '1'
+              }
+              this.$emit('update:deals', this.deals)
               resolve({
                 title: 'Успешно',
                 body: 'Оплата добавлена',
@@ -291,7 +296,8 @@
             axios.put('https://beta.project.nullteam.info/api/billings/' + newBilling.billing_id, {
               billing_deal: newBilling.billing_deal,
               billing_date: newBilling.billing_date,
-              billing_sum: newBilling.billing_sum
+              billing_sum: newBilling.billing_sum,
+              billing_transfer_date: newBilling.billing_transfer_date
             }).then(resp => {
               originalBilling = Object.assign(originalBilling, newBilling)
               resolve({
@@ -436,6 +442,12 @@
         height: 38px;
         border-radius: 5px;
         background-color: #ffffff;
+    }
+
+    #enterprise_panel_modal .form-field--border {
+      padding: 0 25px;
+      width: 100%;
+      border-bottom: 1px solid rgba(0,0,0,.1)
     }
 
     #enterprise_panel_modal .form-field:first-child {

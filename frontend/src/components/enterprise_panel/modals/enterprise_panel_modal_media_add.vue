@@ -40,7 +40,7 @@
   import 'vue-awesome/icons/bullhorn'
   export default {
     name: 'EnterprisePanelModalMediaAdd',
-    props: ['requests', 'billings', 'clients', 'media', 'deals'],
+    props: ['billings', 'clients', 'media', 'deals'],
     data () {
       return {
         media_name: '',
@@ -63,7 +63,8 @@
         this.$emit('addMedia', {
           media_name: this.media_name,
           media_address: this.media_address,
-          media_type: this.media_type.value
+          media_type: this.media_type.value,
+          media_type_info: this.media_type
         })
       }
     }

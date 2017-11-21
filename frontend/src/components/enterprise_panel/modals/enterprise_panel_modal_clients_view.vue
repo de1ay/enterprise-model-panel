@@ -20,7 +20,7 @@
   import 'vue-awesome/icons/user'
   export default {
     name: 'EnterprisePanelModalClientsView',
-    props: ['requests', 'billings', 'clients', 'media', 'deals', 'additional_data'],
+    props: ['billings', 'clients', 'media', 'deals', 'additional_data'],
     data () {
       return {
         editable_data: Object.assign({}, this.additional_data)
