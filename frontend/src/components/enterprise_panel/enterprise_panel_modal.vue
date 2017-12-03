@@ -10,13 +10,17 @@
         :additional_data="additional_data"
         @hideModal="hideModal"
         @addDeal="addDeal"
-        @addMedia="addMedia"
-        @addClient="addClient"
-        @addBilling="addBilling"
         @editDeal="editDeal"
+        @deleteDeal="deleteDeal"
+        @addMedia="addMedia"
         @editMedia="editMedia"
+        @deleteMedia="deleteMedia"
+        @addClient="addClient"
         @editClient="editClient"
-        @editBilling="editBilling">
+        @deleteClient="deleteClient"
+        @addBilling="addBilling"
+        @editBilling="editBilling"
+        @deleteBilling="deleteBilling">
       </component>
     </div>
   </div>
@@ -146,6 +150,49 @@
         ))
         this.$emit('update:modal_active', false)
       },
+      deleteDeal (deal) {
+        this.$snotify.async(
+          'Запрос выполняется',
+          'Подождите...',
+          () => new Promise((resolve, reject) => {
+            axios.delete('https://beta.project.nullteam.info/api/deals/' + deal.deal_id).then(resp => {
+              let relatedBillings = this.billings.filter(billing => {
+                return billing.billing_deal_info.deal_id === deal.deal_id
+              })
+              relatedBillings.forEach(billing => {
+                this.billings.splice(this.billings.indexOf(billing))
+              })
+              this.deals.splice(this.deals.indexOf(deal))
+              this.$emit('update:deals', this.deals)
+              this.$emit('update:billings', this.billings)
+              resolve({
+                title: 'Успешно',
+                body: 'Сделка удалена',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+            }).catch(resp => {
+              /*eslint-disable */
+              reject({
+                title: 'Ошибка!',
+                body: 'Сделка не удалена',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+              /*eslint-enable */
+            })
+          }
+        ))
+        this.hideModal({}, true)
+      },
       addMedia (media) {
         this.$snotify.async(
           'Запрос выполняется',
@@ -202,6 +249,12 @@
               media_name: newMedia.media_name
             }).then(resp => {
               originalMedia = Object.assign(originalMedia, newMedia)
+              this.deals.forEach(deal => {
+                if (deal.deal_media_info.media_id === originalMedia.media_id) {
+                  deal.deal_media_info = originalMedia
+                }
+              })
+              this.$emit('update:deals', this.deals)
               resolve({
                 title: 'Успешно',
                 body: 'Медиа-носитель изменён',
@@ -229,6 +282,56 @@
           }
         ))
         this.$emit('update:modal_active', false)
+      },
+      deleteMedia (media) {
+        this.$snotify.async(
+          'Запрос выполняется',
+          'Подождите...',
+          () => new Promise((resolve, reject) => {
+            axios.delete('https://beta.project.nullteam.info/api/media/' + media.media_id).then(resp => {
+              let relatedDeals = this.deals.filter(deal => {
+                return deal.deal_media_info.media_id === media.media_id
+              })
+              relatedDeals.forEach(deal => {
+                let relatedBillings = this.billings.filter(billing => {
+                  return billing.billing_deal_info.deal_id === deal.deal_id
+                })
+                relatedBillings.forEach(billing => {
+                  this.billings.splice(this.billings.indexOf(billing))
+                })
+                this.deals.splice(this.deals.indexOf(deal))
+              })
+              this.media.splice(this.media.indexOf(media))
+              this.$emit('update:deals', this.deals)
+              this.$emit('update:billings', this.billings)
+              this.$emit('update:media', this.media)
+              resolve({
+                title: 'Успешно',
+                body: 'Медиа-носитель удален',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+            }).catch(resp => {
+              /*eslint-disable */
+              reject({
+                title: 'Ошибка!',
+                body: 'Медиа-носитель не удален',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+              /*eslint-enable */
+            })
+          }
+        ))
+        this.hideModal({}, true)
       },
       addBilling (billing) {
         this.$snotify.async(
@@ -299,7 +402,40 @@
               billing_sum: newBilling.billing_sum,
               billing_transfer_date: newBilling.billing_transfer_date
             }).then(resp => {
-              originalBilling = Object.assign(originalBilling, newBilling)
+              if (newBilling.billing_deal === originalBilling.billing_deal) {
+                let relatedDeal = this.deals.filter(deal => {
+                  return deal.deal_id === originalBilling.billing_deal
+                })[0]
+                relatedDeal.deal_paid = relatedDeal.deal_paid - originalBilling.billing_sum + newBilling.billing_sum
+                if (relatedDeal.deal_paid >= relatedDeal.deal_sum) {
+                  relatedDeal.deal_status = '2'
+                } else {
+                  relatedDeal.deal_status = '1'
+                }
+              } else {
+                let originalRelatedDeal = this.deals.filter(deal => {
+                  return deal.deal_id === originalBilling.billing_deal
+                })[0]
+                let newRelatedDeal = this.deals.filter(deal => {
+                  return deal.deal_id === newBilling.billing_deal
+                })[0]
+                originalRelatedDeal.deal_paid -= originalBilling.billing_sum
+                if (originalRelatedDeal.deal_paid >= originalRelatedDeal.deal_sum) {
+                  originalRelatedDeal.deal_status = '2'
+                } else {
+                  originalRelatedDeal.deal_status = '1'
+                }
+                newRelatedDeal.deal_paid += newBilling.billing_sum
+                if (newRelatedDeal.deal_paid >= newRelatedDeal.deal_sum) {
+                  newRelatedDeal.deal_status = '2'
+                } else {
+                  newRelatedDeal.deal_status = '1'
+                }
+              }
+              this.billings.splice(this.billings.indexOf(originalBilling))
+              this.billings.push(newBilling)
+              this.$emit('update:deals', this.deals)
+              this.$emit('update:billings', this.billings)
               resolve({
                 title: 'Успешно',
                 body: 'Оплата изменена',
@@ -327,6 +463,49 @@
           }
         ))
         this.$emit('update:modal_active', false)
+      },
+      deleteBilling (billing) {
+        this.$snotify.async(
+          'Запрос выполняется',
+          'Подождите...',
+          () => new Promise((resolve, reject) => {
+            axios.delete('https://beta.project.nullteam.info/api/billings/' + billing.billing_id).then(resp => {
+              let relatedDeal = this.deals.filter(deal => {
+                return deal.deal_id === billing.billing_deal_info.deal_id
+              })[0]
+              relatedDeal.deal_paid -= billing.billing_sum
+              if (relatedDeal.deal_paid < relatedDeal.deal_sum) {
+                relatedDeal.deal_status = '1'
+              }
+              this.billings.splice(this.billings.indexOf(billing))
+              this.$emit('update:billings', this.billings)
+              resolve({
+                title: 'Успешно',
+                body: 'Оплата удалена',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+            }).catch(resp => {
+              /*eslint-disable */
+              reject({
+                title: 'Ошибка!',
+                body: 'Оплата не удалена',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+              /*eslint-enable */
+            })
+          }
+        ))
+        this.hideModal({}, true)
       },
       addClient (client) {
         this.$snotify.async(
@@ -375,6 +554,12 @@
               client_name: newClient.client_name
             }).then(resp => {
               originalClient = Object.assign(originalClient, newClient)
+              this.deals.forEach(deal => {
+                if (deal.deal_client_info.client_id === originalClient.client_id) {
+                  deal.deal_client_info = originalClient
+                }
+              })
+              this.$emit('update:deals', this.deals)
               resolve({
                 title: 'Успешно',
                 body: 'Клиент изменён',
@@ -402,6 +587,56 @@
           }
         ))
         this.$emit('update:modal_active', false)
+      },
+      deleteClient (client) {
+        this.$snotify.async(
+          'Запрос выполняется',
+          'Подождите...',
+          () => new Promise((resolve, reject) => {
+            axios.delete('https://beta.project.nullteam.info/api/clients/' + client.client_id).then(resp => {
+              let relatedDeals = this.deals.filter(deal => {
+                return deal.deal_client_info.client_id === client.client_id
+              })
+              relatedDeals.forEach(deal => {
+                let relatedBillings = this.billings.filter(billing => {
+                  return billing.billing_deal_info.deal_id === deal.deal_id
+                })
+                relatedBillings.forEach(billing => {
+                  this.billings.splice(this.billings.indexOf(billing))
+                })
+                this.deals.splice(this.deals.indexOf(deal))
+              })
+              this.clients.splice(this.clients.indexOf(client))
+              this.$emit('update:deals', this.deals)
+              this.$emit('update:billings', this.billings)
+              this.$emit('update:clients', this.clients)
+              resolve({
+                title: 'Успешно',
+                body: 'Клиент удален',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+            }).catch(resp => {
+              /*eslint-disable */
+              reject({
+                title: 'Ошибка!',
+                body: 'Клиент не удален',
+                config: {
+                  closeOnClick: true,
+                  timeout: 2000,
+                  showProgressBar: true,
+                  pauseOnHover: true
+                }
+              })
+              /*eslint-enable */
+            })
+          }
+        ))
+        this.hideModal({}, true)
       }
     }
   }

@@ -44,7 +44,6 @@
 </template>
 
 <script>
-  import axios from 'axios'
   import 'vue-awesome/icons/handshake-o'
   import 'vue-awesome/icons/money'
   import 'vue-awesome/icons/flag-o'
@@ -88,46 +87,10 @@
           closeOnClick: false,
           pauseOnHover: true,
           buttons: [
-            {text: 'Да', action: (notifyId) => { this.deleteBilling(this.additional_data); this.$snotify.remove(notifyId) }},
+            {text: 'Да', action: (notifyId) => { this.$emit('deleteBilling', this.additional_data); this.$snotify.remove(notifyId) }},
             {text: 'Нет', action: (notifyId) => this.$snotify.remove(notifyId)}
           ]
         })
-      },
-      deleteBilling (rowObj) {
-        this.$snotify.async(
-          'Запрос выполняется',
-          'Подождите...',
-          () => new Promise((resolve, reject) => {
-            axios.delete('https://beta.project.nullteam.info/api/billings/' + rowObj.billing_id).then(resp => {
-              this.billings.splice(this.billings.indexOf(rowObj))
-              this.$emit('update:billings', this.billings)
-              resolve({
-                title: 'Успешно',
-                body: 'Оплата удалена',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-            }).catch(resp => {
-              /*eslint-disable */
-              reject({
-                title: 'Ошибка!',
-                body: 'Оплата не удалена',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-              /*eslint-enable */
-            })
-          }
-        ))
-        this.$emit('hideModal', {}, true)
       }
     },
     components: {

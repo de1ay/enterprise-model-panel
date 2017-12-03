@@ -98,7 +98,6 @@
 
 <script>
   import moment from 'moment'
-  import axios from 'axios'
   import 'vue-awesome/icons/globe'
   import 'vue-awesome/icons/money'
   import 'vue-awesome/icons/newspaper-o'
@@ -213,6 +212,19 @@
         this.editable_data.deal_period = dealPeriod
         this.editable_data.start_date = dates[0]
         this.editable_data.end_date = dates[dates.length - 1]
+        if (this.editable_data.deal_status !== '4' && this.editable_data.deal_status !== '3') {
+          if (this.editable_data.deal_paid >= this.editable_data.deal_sum) {
+            this.editable_data.deal_status = '2'
+          } else {
+            this.editable_data.deal_status = '1'
+          }
+        }
+        if (this.editable_data.deal_status === '2' && new Date() > moment(this.editable_data.start_date, 'DD/MM/YYYY').toDate() && new Date() < moment(this.editable_data.end_date, 'DD/MM/YYYY').toDate()) {
+          this.editable_data.deal_status = '3'
+        }
+        if (this.editable_data.deal_status !== '4' && new Date() > moment(this.editable_data.end_date, 'DD/MM/YYYY').toDate()) {
+          this.editable_data.deal_status = '4'
+        }
         this.$emit('editDeal', this.editable_data, this.additional_data)
       },
       deleteDealConfirm () {
@@ -222,46 +234,10 @@
           closeOnClick: false,
           pauseOnHover: true,
           buttons: [
-            {text: 'Да', action: (notifyId) => { this.deleteDeal(this.additional_data); this.$snotify.remove(notifyId) }},
+            {text: 'Да', action: (notifyId) => { this.$emit('deleteDeal', this.additional_data); this.$snotify.remove(notifyId) }},
             {text: 'Нет', action: (notifyId) => this.$snotify.remove(notifyId)}
           ]
         })
-      },
-      deleteDeal (rowObj) {
-        this.$snotify.async(
-          'Запрос выполняется',
-          'Подождите...',
-          () => new Promise((resolve, reject) => {
-            axios.delete('https://beta.project.nullteam.info/api/deals/' + rowObj.deal_id).then(resp => {
-              this.deals.splice(this.deals.indexOf(rowObj))
-              this.$emit('update:deals', this.deals)
-              resolve({
-                title: 'Успешно',
-                body: 'Сделка удалена',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-            }).catch(resp => {
-              /*eslint-disable */
-              reject({
-                title: 'Ошибка!',
-                body: 'Сделка не удалена',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-              /*eslint-enable */
-            })
-          }
-        ))
-        this.$emit('hideModal', {}, true)
       }
     },
     components: {

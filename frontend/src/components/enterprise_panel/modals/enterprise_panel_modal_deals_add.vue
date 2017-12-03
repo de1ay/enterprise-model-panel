@@ -238,7 +238,7 @@
         if (this.start_date !== '' && this.end_date !== '') {
           this.deal_periods.push({
             period_start: this.start_date,
-            period_end: this.period_end,
+            period_end: this.end_date,
             period_date: this.start_date + '-' + this.end_date
           })
           this.start_date = ''

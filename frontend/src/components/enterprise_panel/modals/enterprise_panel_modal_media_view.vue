@@ -36,7 +36,6 @@
 </template>
 
 <script>
-  import axios from 'axios'
   import 'vue-awesome/icons/globe'
   import 'vue-awesome/icons/television'
   import 'vue-awesome/icons/bullhorn'
@@ -82,46 +81,10 @@
           closeOnClick: false,
           pauseOnHover: true,
           buttons: [
-            {text: 'Да', action: (notifyId) => { this.deleteMedia(this.additional_data); this.$snotify.remove(notifyId) }},
+            {text: 'Да', action: (notifyId) => { this.$emit('deleteMedia', this.additional_data); this.$snotify.remove(notifyId) }},
             {text: 'Нет', action: (notifyId) => this.$snotify.remove(notifyId)}
           ]
         })
-      },
-      deleteMedia (rowObj) {
-        this.$snotify.async(
-          'Запрос выполняется',
-          'Подождите...',
-          () => new Promise((resolve, reject) => {
-            axios.delete('https://beta.project.nullteam.info/api/media/' + rowObj.media_id).then(resp => {
-              this.media.splice(this.media.indexOf(rowObj))
-              this.$emit('update:media', this.media)
-              resolve({
-                title: 'Успешно',
-                body: 'Медиа-носитель удален',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-            }).catch(resp => {
-              /*eslint-disable */
-              reject({
-                title: 'Ошибка!',
-                body: 'Медиа-носитель не удален',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-              /*eslint-enable */
-            })
-          }
-        ))
-        this.$emit('hideModal', {}, true)
       }
     }
   }

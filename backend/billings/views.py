@@ -42,12 +42,13 @@ class BillingAPI(APIView):
         return Response(billing_serializer.data)
 
     def put(self, request, id, format=None):
-        billing = self.get_object(id)
-        billing_serializer = BillingSerializer(billing, data=request.data)
+        old_billing = self.get_object(id)
+        billing_serializer = BillingSerializer(old_billing, data=request.data)
         if billing_serializer.is_valid():
+            old_related_deal = old_billing.billing_deal
+            old_billing_sum = old_billing.billing_sum
             new_billing = billing_serializer.save()
-            related_deal = billing.billing_deal
-            related_deal.change_paid_value(new_billing.billing_sum - billing.billing_sum)
+            new_billing.update_related_deal(old_billing_sum, old_related_deal)
             return Response(billing_serializer.data)
         return Response(billing_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

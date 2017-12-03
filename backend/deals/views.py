@@ -22,6 +22,7 @@ class DealsAPI(APIView):
             return Response(deal_serializer.data, status=status.HTTP_201_CREATED)
         return Response(deal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class DealAPI(APIView):
 
     renderer_classes = (JSONRenderer, )
@@ -41,7 +42,9 @@ class DealAPI(APIView):
         deal = self.get_object(id)
         deal_serializer = DealSerializer(deal, data=request.data)
         if deal_serializer.is_valid():
-            deal_serializer.save()
+            new_deal = deal_serializer.save()
+            new_deal.update_status()
+            new_deal.save()
             return Response(deal_serializer.data)
         return Response(deal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

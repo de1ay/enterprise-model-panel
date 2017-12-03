@@ -16,7 +16,6 @@
 </template>
 
 <script>
-  import axios from 'axios'
   import 'vue-awesome/icons/user'
   export default {
     name: 'EnterprisePanelModalClientsView',
@@ -49,46 +48,10 @@
           closeOnClick: false,
           pauseOnHover: true,
           buttons: [
-            {text: 'Да', action: (notifyId) => { this.deleteClient(this.additional_data); this.$snotify.remove(notifyId) }},
+            {text: 'Да', action: (notifyId) => { this.$emit('deleteClient', this.additional_data); this.$snotify.remove(notifyId) }},
             {text: 'Нет', action: (notifyId) => this.$snotify.remove(notifyId)}
           ]
         })
-      },
-      deleteClient (rowObj) {
-        this.$snotify.async(
-          'Запрос выполняется',
-          'Подождите...',
-          () => new Promise((resolve, reject) => {
-            axios.delete('https://beta.project.nullteam.info/api/clients/' + rowObj.client_id).then(resp => {
-              this.clients.splice(this.clients.indexOf(rowObj))
-              this.$emit('update:clients', this.clients)
-              resolve({
-                title: 'Успешно',
-                body: 'Клиент удален',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-            }).catch(resp => {
-              /*eslint-disable */
-              reject({
-                title: 'Ошибка!',
-                body: 'Клиент не удален',
-                config: {
-                  closeOnClick: true,
-                  timeout: 2000,
-                  showProgressBar: true,
-                  pauseOnHover: true
-                }
-              })
-              /*eslint-enable */
-            })
-          }
-        ))
-        this.$emit('hideModal', {}, true)
       }
     }
   }

@@ -3,6 +3,7 @@ from clients.models import Client
 from media.models import Media
 
 
+# TODO: deactivate editing for archived deals (billings too)
 class Deal(models.Model):
     deal_id = models.AutoField(primary_key=True)
     deal_client = models.ForeignKey(Client, on_delete=models.CASCADE, blank=False)  # Client ID
@@ -33,8 +34,12 @@ class Deal(models.Model):
 
     def change_paid_value(self, change: int):
         self.deal_paid += change
-        if self.deal_status != '2' and self.deal_sum <= self.deal_paid:
-            self.deal_status = '2'
-        elif self.deal_status != '1' and self.deal_sum >= self.deal_paid:
-            self.deal_status = '1'
+        self.update_status()
         self.save()
+
+    def update_status(self):
+        if self.deal_status != '4' and self.deal_status != '3':
+            if self.deal_sum <= self.deal_paid:
+                self.deal_status = '2'
+            else:
+                self.deal_status = '1'
